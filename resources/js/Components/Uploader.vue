@@ -1,7 +1,20 @@
 <script setup>
+import FileIcon from "./FileIcon.vue";
 import InputLabel from "./InputLabel.vue";
 import PrimaryButton from "./PrimaryButton.vue";
 import TextInput from "./TextInput.vue";
+import { ref } from "vue";
+
+const uploads = ref([]);
+
+const handleUploadedFiles = (files) => {
+    Array.from(files).forEach((file) => {
+        uploads.value.unshift({
+            id: 1,
+            title: file.name,
+        });
+    });
+};
 </script>
 
 <template>
@@ -13,20 +26,7 @@ import TextInput from "./TextInput.vue";
                         class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md border-gray-300"
                     >
                         <div class="space-y-1 text-center">
-                            <svg
-                                class="mx-auto h-12 w-12 text-gray-400"
-                                stroke="currentColor"
-                                fill="none"
-                                viewBox="0 0 48 48"
-                                aria-hidden="true"
-                            >
-                                <path
-                                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                ></path>
-                            </svg>
+                            <FileIcon />
                             <div class="flex text-sm text-gray-600">
                                 <label
                                     for="file-upload"
@@ -34,6 +34,11 @@ import TextInput from "./TextInput.vue";
                                 >
                                     <span>Upload a file</span>
                                     <input
+                                        @change="
+                                            handleUploadedFiles(
+                                                $event.target.files
+                                            )
+                                        "
                                         id="file-upload"
                                         name="file-upload"
                                         type="file"
@@ -43,9 +48,14 @@ import TextInput from "./TextInput.vue";
                                 </label>
                                 <p class="pl-1">or drag and drop</p>
                             </div>
+
                             <p class="text-xs text-gray-500">
                                 MP4, AVI up to 100MB
                             </p>
+
+                            <div v-for="upload in uploads">
+                                {{ upload }}
+                            </div>
                         </div>
                     </div>
                 </div>
