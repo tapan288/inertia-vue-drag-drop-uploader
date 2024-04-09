@@ -1,19 +1,20 @@
 <script setup>
 import FileIcon from "./FileIcon.vue";
-import InputLabel from "./InputLabel.vue";
-import PrimaryButton from "./PrimaryButton.vue";
-import TextInput from "./TextInput.vue";
 import { ref } from "vue";
 import UploadItem from "./UploadItem.vue";
+import axios from "axios";
 
 const uploads = ref([]);
 
 const handleUploadedFiles = (files) => {
     Array.from(files).forEach((file) => {
-        uploads.value.unshift({
-            id: 1,
-            title: file.name,
-        });
+        axios
+            .post(route("vidoes.store"), {
+                title: file.name,
+            })
+            .then((response) => {
+                console.log(response.data);
+            });
     });
 };
 </script>
