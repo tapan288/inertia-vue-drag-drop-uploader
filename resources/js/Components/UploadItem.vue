@@ -29,13 +29,13 @@ const update = () => {
         <div class="p-6 border-gray-900">
             <div class="flex space-x-6">
                 <div class="max-w-[240px] w-full space-y-3">
-                    <div class="space-y-1">
+                    <div class="space-y-1" v-if="upload.uploading">
                         <div
                             class="bg-gray-100 shadow-inner h-3 rounded overflow-hidden"
                         >
                             <div
                                 class="h-full bg-indigo-600 rounded-full"
-                                style="width: 50%"
+                                v-bind:style="{ width: `${upload.progress}%` }"
                             ></div>
                         </div>
                         <div class="text-sm">Uploading</div>

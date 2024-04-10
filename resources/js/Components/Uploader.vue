@@ -20,9 +20,15 @@ const handleUploadedFiles = (files) => {
                     id: response.data.id,
                     title: file.name,
                     file: startChunkedUpload(file, response.data.id),
+                    uploading: true,
+                    progress: 0,
                 });
             });
     });
+};
+
+const getUploadById = (id) => {
+    return uploads.value.find((upload) => upload.id === id);
 };
 
 const startChunkedUpload = (file, id) => {
@@ -34,6 +40,14 @@ const startChunkedUpload = (file, id) => {
         method: "POST",
         file: file,
         chunkSize: 1 * 1024, // 1mb
+    });
+
+    upload.on("progress", (p) => {
+        getUploadById(id).progress = p.detail;
+    });
+
+    upload.on("success", () => {
+        getUploadById(id).uploading = false;
     });
 
     return upload;
