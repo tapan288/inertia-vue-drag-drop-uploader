@@ -3,6 +3,8 @@ import FileIcon from "./FileIcon.vue";
 import { ref } from "vue";
 import UploadItem from "./UploadItem.vue";
 import axios from "axios";
+import { createUpload } from "@mux/upchunk";
+import { usePage } from "@inertiajs/vue3";
 
 const uploads = ref([]);
 
@@ -17,9 +19,24 @@ const handleUploadedFiles = (files) => {
                 uploads.value.unshift({
                     id: response.data.id,
                     title: file.name,
+                    file: startChunkedUpload(file, response.data.id),
                 });
             });
     });
+};
+
+const startChunkedUpload = (file, id) => {
+    const upload = createUpload({
+        endpoint: route("videos.upload", id),
+        headers: {
+            "X-CSRF-TOKEN": usePage().props.csrf_token,
+        },
+        method: "POST",
+        file: file,
+        chunkSize: 1 * 1024, // 1mb
+    });
+
+    return upload;
 };
 </script>
 

@@ -25,4 +25,9 @@ class VideoController extends Controller
 
         return back();
     }
+
+    public function upload(Request $request, Video $video)
+    {
+        //
+    }
 }
