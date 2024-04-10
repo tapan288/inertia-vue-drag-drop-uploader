@@ -9,11 +9,15 @@ const uploads = ref([]);
 const handleUploadedFiles = (files) => {
     Array.from(files).forEach((file) => {
         axios
-            .post(route("vidoes.store"), {
+            .post(route("videos.store"), {
                 title: file.name,
             })
             .then((response) => {
-                console.log(response.data);
+                // console.log(response.data);
+                uploads.value.unshift({
+                    id: response.data.id,
+                    title: file.name,
+                });
             });
     });
 };

@@ -1,15 +1,30 @@
 <script setup>
+import InputError from "./InputError.vue";
 import InputLabel from "./InputLabel.vue";
 import PrimaryButton from "./PrimaryButton.vue";
+import TextArea from "./TextArea.vue";
 import TextInput from "./TextInput.vue";
+import { useForm } from "@inertiajs/vue3";
 
-defineProps({
+const props = defineProps({
     upload: Object,
 });
+
+const form = useForm({
+    title: props.upload.title,
+    description: "",
+});
+
+const update = () => {
+    form.put(route("videos.update", props.upload.id), {
+        preserveScroll: true,
+        preserveState: true,
+    });
+};
 </script>
 
 <template>
-    {{ upload }}
+    <!-- {{ upload }} -->
     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 border-gray-900">
             <div class="flex space-x-6">
@@ -50,14 +65,25 @@ defineProps({
                     </div>
                 </div>
 
-                <form class="flex-grow space-y-6">
+                <form @submit.prevent="update" class="flex-grow space-y-6">
                     <div>
                         <InputLabel for="title" value="Title" />
                         <TextInput
+                            v-model="form.title"
                             id="title"
                             type="text"
                             class="mt-1 block w-full"
                         />
+                        <InputError :message="form.errors.title" />
+                    </div>
+                    <div>
+                        <InputLabel for="description" value="Description" />
+                        <TextArea
+                            v-model="form.description"
+                            id="description"
+                            class="mt-1 block w-full"
+                        />
+                        <InputError :message="form.errors.description" />
                     </div>
 
                     <!-- TextArea -->
