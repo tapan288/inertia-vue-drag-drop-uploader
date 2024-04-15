@@ -4,7 +4,7 @@ import { ref } from "vue";
 import UploadItem from "./UploadItem.vue";
 import axios from "axios";
 import { createUpload } from "@mux/upchunk";
-import { usePage } from "@inertiajs/vue3";
+import { router, usePage } from "@inertiajs/vue3";
 
 const uploads = ref([]);
 
@@ -29,6 +29,17 @@ const handleUploadedFiles = (files) => {
 
 const getUploadById = (id) => {
     return uploads.value.find((upload) => upload.id === id);
+};
+
+const cancelUpload = (id) => {
+    getUploadById(id).file.abort();
+    router.delete(route("videos.destroy", id), {
+        preserveScroll: true,
+        preserveState: true,
+        onSuccess: () => {
+            uploads.value = uploads.value.filter((upload) => upload.id !== id);
+        },
+    });
 };
 
 const startChunkedUpload = (file, id) => {
@@ -96,7 +107,7 @@ const startChunkedUpload = (file, id) => {
 
             <div class="my-3" v-for="upload in uploads" :key="upload.id">
                 <!-- UploadItem Component -->
-                <UploadItem :upload="upload" />
+                <UploadItem v-on:cancel="cancelUpload" :upload="upload" />
             </div>
         </div>
     </div>

@@ -53,4 +53,11 @@ class VideoController extends Controller
             'path' => $file->storeAs('videos', Str::uuid(), 'public'),
         ]);
     }
+
+    public function destroy(Video $video)
+    {
+        $video->delete();
+
+        return back();
+    }
 }

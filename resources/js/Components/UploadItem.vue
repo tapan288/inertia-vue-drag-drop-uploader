@@ -6,6 +6,8 @@ import TextArea from "./TextArea.vue";
 import TextInput from "./TextInput.vue";
 import { useForm } from "@inertiajs/vue3";
 
+const emit = defineEmits();
+
 const props = defineProps({
     upload: Object,
 });
@@ -59,7 +61,11 @@ const update = () => {
                         <button class="text-blue-500 text-sm font-medium">
                             Resume
                         </button>
-                        <button class="text-blue-500 text-sm font-medium">
+                        <button
+                            @click="emit('cancel', upload.id)"
+                            v-if="upload.uploading"
+                            class="text-blue-500 text-sm font-medium"
+                        >
                             Cancel upload
                         </button>
                     </div>
