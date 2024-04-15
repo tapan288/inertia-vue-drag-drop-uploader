@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Video;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use App\Http\Requests\UpdateVideoRequest;
+use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
+use Pion\Laravel\ChunkUpload\Handler\ContentRangeUploadHandler;
 
 class VideoController extends Controller
 {
@@ -28,6 +32,25 @@ class VideoController extends Controller
 
     public function upload(Request $request, Video $video)
     {
-        //
+        $reciever = new FileReceiver(
+            UploadedFile::fake()->createWithContent('file', $request->getContent()),
+            $request,
+            ContentRangeUploadHandler::class,
+        );
+
+        $save = $reciever->receive();
+
+        if ($save->isFinished()) {
+            return $this->saveAndStoreFile($save->getFile(), $video); // UploadedFile
+        }
+
+        $save->handler();
+    }
+
+    protected function saveAndStoreFile(UploadedFile $file, Video $video)
+    {
+        $video->update([
+            'path' => $file->storeAs('videos', Str::uuid(), 'public'),
+        ]);
     }
 }
