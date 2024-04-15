@@ -31,6 +31,14 @@ const getUploadById = (id) => {
     return uploads.value.find((upload) => upload.id === id);
 };
 
+const resumeUpload = (id) => {
+    getUploadById(id).file.resume();
+};
+
+const pauseUpload = (id) => {
+    getUploadById(id).file.pause();
+};
+
 const cancelUpload = (id) => {
     getUploadById(id).file.abort();
     router.delete(route("videos.destroy", id), {
@@ -107,7 +115,12 @@ const startChunkedUpload = (file, id) => {
 
             <div class="my-3" v-for="upload in uploads" :key="upload.id">
                 <!-- UploadItem Component -->
-                <UploadItem v-on:cancel="cancelUpload" :upload="upload" />
+                <UploadItem
+                    v-on:cancel="cancelUpload"
+                    v-on:resume="resumeUpload"
+                    v-on:pause="pauseUpload"
+                    :upload="upload"
+                />
             </div>
         </div>
     </div>

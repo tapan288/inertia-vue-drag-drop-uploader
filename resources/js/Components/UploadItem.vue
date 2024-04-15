@@ -55,10 +55,18 @@ const update = () => {
                     </div>
 
                     <div class="flex items-center space-x-3">
-                        <button class="text-blue-500 text-sm font-medium">
+                        <button
+                            v-if="!upload.file.paused"
+                            @click="emit('pause', upload.id)"
+                            class="text-blue-500 text-sm font-medium"
+                        >
                             Pause
                         </button>
-                        <button class="text-blue-500 text-sm font-medium">
+                        <button
+                            v-if="upload.file.paused"
+                            @click="emit('resume', upload.id)"
+                            class="text-blue-500 text-sm font-medium"
+                        >
                             Resume
                         </button>
                         <button
