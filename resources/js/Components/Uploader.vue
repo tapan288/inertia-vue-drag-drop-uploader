@@ -8,6 +8,8 @@ import { router, usePage } from "@inertiajs/vue3";
 
 const uploads = ref([]);
 
+const dropping = ref(false);
+
 const handleUploadedFiles = (files) => {
     Array.from(files).forEach((file) => {
         axios
@@ -79,7 +81,14 @@ const startChunkedUpload = (file, id) => {
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <div
+                        v-on:dragover.prevent="dropping = true"
+                        v-on:dragleave.prevent="dropping = false"
+                        v-on:drop.prevent="
+                            handleUploadedFiles($event.dataTransfer.files);
+                            dropping = false;
+                        "
                         class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md border-gray-300"
+                        :class="{ 'border-indigo-600': dropping }"
                     >
                         <div class="space-y-1 text-center">
                             <FileIcon />
