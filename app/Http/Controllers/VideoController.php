@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use App\Http\Requests\UpdateVideoRequest;
+use App\Http\Requests\UploadVideoRequest;
+use App\Http\Requests\DestroyVideoRequest;
 use Pion\Laravel\ChunkUpload\Receiver\FileReceiver;
 use Pion\Laravel\ChunkUpload\Handler\ContentRangeUploadHandler;
 
@@ -30,7 +32,7 @@ class VideoController extends Controller
         return back();
     }
 
-    public function upload(Request $request, Video $video)
+    public function upload(UploadVideoRequest $request, Video $video)
     {
         $reciever = new FileReceiver(
             UploadedFile::fake()->createWithContent('file', $request->getContent()),
@@ -54,7 +56,7 @@ class VideoController extends Controller
         ]);
     }
 
-    public function destroy(Video $video)
+    public function destroy(DestroyVideoRequest $request, Video $video)
     {
         $video->delete();
 
