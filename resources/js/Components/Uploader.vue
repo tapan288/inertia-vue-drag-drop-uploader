@@ -7,9 +7,8 @@ import { createUpload } from "@mux/upchunk";
 import { router, usePage } from "@inertiajs/vue3";
 
 onMounted(() => {
-    Echo.private(`users.${usePage().props.auth.user.id}`).listen(
-        "VideoEncodingStarted",
-        (e) => {
+    Echo.private(`users.${usePage().props.auth.user.id}`)
+        .listen("VideoEncodingStarted", (e) => {
             const upload = getUploadById(e.video_id);
 
             if (!upload) {
@@ -17,8 +16,16 @@ onMounted(() => {
             }
 
             upload.encoding = true;
-        }
-    );
+        })
+        .listen("VideoEncodingProgress", (e) => {
+            const upload = getUploadById(e.video_id);
+
+            if (!upload) {
+                return;
+            }
+
+            upload.encodingProgress = e.percentage;
+        });
 });
 
 const uploads = ref([]);
@@ -39,6 +46,7 @@ const handleUploadedFiles = (files) => {
                     uploading: true,
                     progress: 0,
                     encoding: false,
+                    encodingProgress: 0,
                 });
             });
     });

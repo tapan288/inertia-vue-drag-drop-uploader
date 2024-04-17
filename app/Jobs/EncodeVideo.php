@@ -6,6 +6,7 @@ use App\Models\Video;
 use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
 use App\Events\VideoEncodingStarted;
+use App\Events\VideoEncodingProgress;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -34,6 +35,9 @@ class EncodeVideo implements ShouldQueue
         FFMpeg::fromDisk('public')
             ->open($this->video->path)
             ->export()
+            ->onProgress(function ($percentage) {
+                VideoEncodingProgress::dispatch($this->video, $percentage);
+            })
             ->toDisk('public')
             ->inFormat(new \FFMpeg\Format\Video\X264())
             ->save('videos/' . Str::uuid() . '.mp4');

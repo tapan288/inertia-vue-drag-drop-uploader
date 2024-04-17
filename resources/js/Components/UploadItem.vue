@@ -48,7 +48,9 @@ const update = () => {
                         >
                             <div
                                 class="bg-green-500 h-full rounded-full"
-                                style="width: 50%"
+                                v-bind:style="{
+                                    width: `${upload.encodingProgress}%`,
+                                }"
                             ></div>
                         </div>
                         <div class="text-sm">Encoding</div>
