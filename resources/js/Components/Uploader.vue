@@ -1,10 +1,25 @@
 <script setup>
 import FileIcon from "./FileIcon.vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import UploadItem from "./UploadItem.vue";
 import axios from "axios";
 import { createUpload } from "@mux/upchunk";
 import { router, usePage } from "@inertiajs/vue3";
+
+onMounted(() => {
+    Echo.private(`users.${usePage().props.auth.user.id}`).listen(
+        "VideoEncodingStarted",
+        (e) => {
+            const upload = getUploadById(e.video_id);
+
+            if (!upload) {
+                return;
+            }
+
+            upload.encoding = true;
+        }
+    );
+});
 
 const uploads = ref([]);
 
@@ -17,13 +32,13 @@ const handleUploadedFiles = (files) => {
                 title: file.name,
             })
             .then((response) => {
-                // console.log(response.data);
                 uploads.value.unshift({
                     id: response.data.id,
                     title: file.name,
                     file: startChunkedUpload(file, response.data.id),
                     uploading: true,
                     progress: 0,
+                    encoding: false,
                 });
             });
     });

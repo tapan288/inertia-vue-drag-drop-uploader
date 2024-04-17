@@ -42,7 +42,7 @@ const update = () => {
                         </div>
                         <div class="text-sm">Uploading</div>
                     </div>
-                    <div class="space-y-1">
+                    <div class="space-y-1" v-if="upload.encoding">
                         <div
                             class="bg-gray-100 shadow-inner h-3 rounded overflow-hidden"
                         >

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\EncodeVideo;
 use App\Models\Video;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -54,6 +55,8 @@ class VideoController extends Controller
         $video->update([
             'path' => $file->storeAs('videos', Str::uuid(), 'public'),
         ]);
+
+        EncodeVideo::dispatch($video);
     }
 
     public function destroy(DestroyVideoRequest $request, Video $video)

@@ -4,11 +4,11 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import { onMounted } from "vue";
 
-onMounted(() => {
-    Echo.channel("videos").listen("Test", (e) => {
-        console.log(e);
-    });
-});
+// onMounted(() => {
+//     Echo.channel("videos").listen("Test", (e) => {
+//         console.log(e);
+//     });
+// });
 </script>
 
 <template>
