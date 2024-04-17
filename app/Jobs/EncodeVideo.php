@@ -2,13 +2,15 @@
 
 namespace App\Jobs;
 
-use App\Events\VideoEncodingStarted;
 use App\Models\Video;
+use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
+use App\Events\VideoEncodingStarted;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 class EncodeVideo implements ShouldQueue
 {
@@ -29,6 +31,11 @@ class EncodeVideo implements ShouldQueue
     {
         VideoEncodingStarted::dispatch($this->video);
 
-        // encode the video
+        FFMpeg::fromDisk('public')
+            ->open($this->video->path)
+            ->export()
+            ->toDisk('public')
+            ->inFormat(new \FFMpeg\Format\Video\X264())
+            ->save('videos/' . Str::uuid() . '.mp4');
     }
 }
