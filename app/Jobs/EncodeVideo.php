@@ -8,10 +8,12 @@ use Illuminate\Bus\Queueable;
 use App\Events\VideoEncodingStarted;
 use App\Events\VideoEncodingProgress;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
+use ProtoneMedia\LaravelFFMpeg\Filesystem\Media;
 
 class EncodeVideo implements ShouldQueue
 {
@@ -40,6 +42,16 @@ class EncodeVideo implements ShouldQueue
             })
             ->toDisk('public')
             ->inFormat(new \FFMpeg\Format\Video\X264())
-            ->save('videos/' . Str::uuid() . '.mp4');
+            ->save('videos/' . Str::uuid() . '.mp4')
+            ->afterSaving(function ($exporter, Media $media) {
+                Storage::disk('public')->delete($this->video->path);
+
+                $this->video->update([
+                    'encoded' => true,
+                    'path' => $media->getPath()
+                ]);
+
+                // dispatch an event that the video has been encoded
+            });
     }
 }

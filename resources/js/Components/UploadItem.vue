@@ -56,7 +56,10 @@ const update = () => {
                         <div class="text-sm">Encoding</div>
                     </div>
 
-                    <div class="flex items-center space-x-3">
+                    <div
+                        class="flex items-center space-x-3"
+                        v-if="upload.uploading"
+                    >
                         <button
                             v-if="!upload.file.paused"
                             @click="emit('pause', upload.id)"
@@ -106,7 +109,9 @@ const update = () => {
 
                     <div class="flex items-center space-x-3">
                         <PrimaryButton> Save </PrimaryButton>
-                        <div class="text-sm">Video updated</div>
+                        <div v-if="form.recentlySuccessful" class="text-sm">
+                            Video updated
+                        </div>
                     </div>
                 </form>
             </div>
