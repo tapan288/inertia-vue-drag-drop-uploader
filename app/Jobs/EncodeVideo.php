@@ -37,12 +37,6 @@ class EncodeVideo implements ShouldQueue
         FFMpeg::fromDisk('public')
             ->open($this->video->path)
             ->export()
-            ->onProgress(function ($percentage) {
-                VideoEncodingProgress::dispatch($this->video, $percentage);
-            })
-            ->toDisk('public')
-            ->inFormat(new \FFMpeg\Format\Video\X264())
-            ->save('videos/' . Str::uuid() . '.mp4')
             ->afterSaving(function ($exporter, Media $media) {
                 Storage::disk('public')->delete($this->video->path);
 
@@ -52,6 +46,12 @@ class EncodeVideo implements ShouldQueue
                 ]);
 
                 // dispatch an event that the video has been encoded
-            });
+            })
+            ->onProgress(function ($percentage) {
+                VideoEncodingProgress::dispatch($this->video, $percentage);
+            })
+            ->toDisk('public')
+            ->inFormat(new \FFMpeg\Format\Video\X264())
+            ->save('videos/' . Str::uuid() . '.mp4');
     }
 }
